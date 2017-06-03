@@ -1,8 +1,6 @@
 main :: IO()
 main  = return ()
 
---data Const = Num Float | Con Char
---         deriving Show
 data Oper = Div | Mul | Minus | Plus | Log | Exp
           deriving (Show, Eq)
 
@@ -24,9 +22,6 @@ data Fun a = Num a | Const Char | Var Char
 --   Num f <*> x = fmap f x
 --   -- _ <*> (Const c) = Const c
 --   -- _ <*> (Var x) = Var x
---   -- f <*> (Ln g) = Ln (f <*> g)
---   -- f <*> (Log b n) = Log (f <*> b) (f <*> n)
---   -- f <*> (Exp b n) = Exp (f <*> b) (f <*> n)
 --   -- f <*> (O x g h) = O x (f <*> g) (f <*> h)
 --
 -- instance Monad Fun where
@@ -81,8 +76,6 @@ derive (O x f g) = do g' <- derive g
 -- derive _ = Nothing
 
 shorten :: (Monad m, Num a, Eq a) => Fun a -> m (Fun a)
--- shorten (O Mul (Num n) (Var c)) = return (O Mul (Num n) (Var c))
--- shorten (O Mul (Num n) (Const c)) = return (O Mul (Num n) (Const c))
 shorten (O Mul (Num 1) x) = return x
 shorten (O Mul x (Num 1)) = return x
 shorten (O Mul x y) = return (O Mul x y)
@@ -92,21 +85,3 @@ shorten (O Exp x (Num 1)) = return x
 shorten (O Exp x y) = return (O Mul x y)
 shorten (O Log x y) | x == y = return (Num 1)
                     | otherwise = return (O Log x y)
--- shorten (O Log (Const 'e') (Const 'e')) = return 1
-
-
--- operator Plus = return (+)
--- operator Minus = return (-)
--- operator Mul = return (*)
--- operator Div = return (/)
---
--- operate :: Fun Float -> Fun Float
--- operate (O x f g) = do rf <- reduce f
---                        rg <- reduce g
---                        o <- operator x
---                        return (rf `o` rg)
---
---
--- reduce (Num a) = return (Num a)
--- reduce (Const c) = return (Const c)
--- reduce (Var c) = return (Var c)
