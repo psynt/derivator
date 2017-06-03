@@ -77,3 +77,19 @@ derive (O x f g) = do g' <- derive g
 
 -- and we deal with nothing else
 derive _ = Nothing
+
+operator Plus = return (+)
+operator Minus = return (-)
+operator Mul = return (*)
+operator Div = return (/)
+
+operate :: Fun Float -> Fun Float
+operate (O x f g) = do rf <- reduce f
+                       rg <- reduce g
+                       o <- operator x
+                       return (rf `o` rg)
+
+
+reduce (Num a) = return (Num a)
+reduce (Const c) = return (Const c)
+reduce (Var c) = return (Var c)
