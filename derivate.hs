@@ -76,6 +76,7 @@ derive (O x f g) = do g' <- derive g
 -- derive _ = Nothing
 
 shorten :: (Monad m, Num a, Eq a) => Fun a -> m (Fun a)
+shorten (O Mul (Num x) (Num y)) = return (Num (x*y))
 shorten (O Mul (Num 1) x) = return x
 shorten (O Mul x (Num 1)) = return x
 shorten (O Mul x y) = return (O Mul x y)
